@@ -13,15 +13,18 @@ class Field(Widget):
         self.stretch = shift
         self.field = []
 
-    def map(self, ov: OVector):
+    def map_ov(self, ov: OVector):
         return OVector(self.stretch + self.shift * ov.p, self.shift * ov.v, ov.color)
+
+    def map_v(self, v: Vector):
+        return Vector(self.stretch + self.shift * v)
 
     def add_vector(self, ov: OVector):
         self.field.append(ov)
 
     def draw(self):
         for ov in self.field:
-            ov = self.map(ov)
+            ov = self.map_ov(ov)
             line = Line(points=(ov.p, ov.e()), width=1)
             dot = Ellipse(pos=(ov.p - Vector(2, 2)), size=(5, 5))
             self.canvas.add(ov.color)
@@ -60,7 +63,7 @@ class Field(Widget):
                 u = t ** 0.20
                 ov.color = Color(u, 3 * u * (1 - u), 1 - u, 1)
             else:
-                ov.color = Color(0, 0, 0, 1)
+                ov.color = Color(1, 0, 0, 1)
 
     def normalize(self, unit):
         for ov in self.field:
@@ -70,3 +73,13 @@ class Field(Widget):
         self.calc(field_function, low_left, high_right, step)
         self.paint()
         self.normalize(step * 0.7)
+
+    def add_path(self, low_left: Vector, high_right: Vector, color=Color(1, 1, 1, 1)):
+        low_left = self.map_v(low_left)
+        high_right = self.map_v(high_right)
+        self.canvas.add(color)
+        self.canvas.add(Line(points=(low_left, (low_left.x, high_right.y)), width=1))
+        self.canvas.add(Line(points=((low_left.x, high_right.y), high_right), width=1))
+        self.canvas.add(Line(points=(high_right, (high_right.x, low_left.y)), width=1))
+        self.canvas.add(Line(points=((high_right.x, low_left.y), low_left), width=1))
+
