@@ -10,7 +10,7 @@ class OVector:
         self.v = v
         self.color = color
 
-    def e(self):
+    def end(self):
         return self.p + self.v
 
     def len(self):
