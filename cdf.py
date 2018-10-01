@@ -1,6 +1,3 @@
-from numpy import arange
-
-
 def interp(x, data):
 
     s = [e for e in zip(*(sorted(zip(data[0], data[1]))))]
@@ -24,17 +21,25 @@ def interp(x, data):
     return y
 
 
-def get_nodes(data, num_of_intervals=10):
+def get_division_indices(num_of_elms, num_of_intervals):
+    di = int(num_of_elms / num_of_intervals)
+    i_list = [0]
+    while True:
+        next_i = i_list[-1] + di
+        if next_i > num_of_elms - 1:
+            i_list.append(num_of_elms - 1)
+            break
+        else:
+            i_list.append(next_i)
+    while len(i_list) - 1 > num_of_intervals:
+        i_list.pop(len(i_list) - 2)
+    return i_list
 
-    min_x = min(data)
-    max_x = max(data)
+
+def get_cdf_nodes(data, num_of_intervals):
+    data = sorted(data)
     num_of_elms = len(data)
-    dx = (max_x - min_x) / num_of_intervals
-    x_list = list(arange(min_x, max_x + dx, dx))
-
-    y_list = []
-    for e in x_list:
-        y = sum(d <= e for d in data) / num_of_elms
-        y_list.append(y)
-
+    i_list = get_division_indices(num_of_elms, num_of_intervals)
+    x_list = [data[i] for i in i_list]
+    y_list = [(i + 1) / num_of_elms for i in i_list]
     return [x_list, y_list]

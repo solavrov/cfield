@@ -9,7 +9,7 @@ import cdf
 
 class Field(Widget):
 
-    def __init__(self, shift=Vector(0, 0), stretch=Vector(1, 1), back_color=Color(1, 1, 1, 1), **kwargs):
+    def __init__(self, shift=Vector(0, 0), stretch=Vector(1, 1), back_color=Color(0, 0, 0, 1), **kwargs):
         super().__init__(**kwargs)
         self.shift = stretch
         self.stretch = shift
@@ -29,13 +29,11 @@ class Field(Widget):
     def draw(self):
         for ov in self.field:
             ov = self.map_ov(ov)
-            # line = Line(points=(ov.p, ov.end()), width=1)
             e = ov.v.rotate(90).normalize()
             tri_points = tuple(ov.end()) + tuple(ov.p + 2 * e) + tuple(ov.p - 2 * e)
             tri = Triangle(points=tri_points)
             dot = Ellipse(pos=(ov.p - Vector(2, 2)), size=(5, 5))
             self.canvas.add(ov.color)
-            # self.canvas.add(line)
             self.canvas.add(tri)
             self.canvas.add(dot)
 
@@ -54,7 +52,7 @@ class Field(Widget):
                 x += step
             y += step
 
-    def paint(self):
+    def paint(self, accuracy):
         mods = []
         for ov in self.field:
             mod = ov.len()
@@ -62,7 +60,7 @@ class Field(Widget):
                 mods.append(mod)
         max_mod = max(mods)
         norm_mods = [e / max_mod for e in mods]
-        cdf_nodes = cdf.get_nodes(norm_mods, 1000)
+        cdf_nodes = cdf.get_cdf_nodes(norm_mods, accuracy)
         for ov in self.field:
             mod = ov.len()
             if mod != inf:
@@ -70,7 +68,6 @@ class Field(Widget):
                     t = mod / max_mod
                 except ZeroDivisionError:
                     t = 0
-                # u = t ** 0.2
                 u = cdf.interp(t, cdf_nodes)
                 ov.color = Color(u, 4 * u * (1 - u), 1 - u, 1)
             else:
@@ -80,12 +77,12 @@ class Field(Widget):
         for ov in self.field:
             ov.normalize(unit)
 
-    def create(self, field_function, low_left: Vector, high_right: Vector, step: float):
+    def create(self, field_function, low_left: Vector, high_right: Vector, step, paint_accuracy=20):
         self.calc(field_function, low_left, high_right, step)
-        self.paint()
+        self.paint(paint_accuracy)
         self.normalize(step * 0.8)
 
-    def add_path(self, low_left: Vector, high_right: Vector, color=Color(0.5, 0.5, 0.5, 1)):
+    def add_path(self, low_left: Vector, high_right: Vector, color=Color(1, 1, 1, 1)):
         low_left = self.map_v(low_left)
         high_right = self.map_v(high_right)
         self.canvas.add(color)

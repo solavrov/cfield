@@ -18,8 +18,11 @@ class Program(App):
         def g2(z):
             return (z - 4) * (z + 4) * (z - 4j) * (z + 4j) * z ** -2
 
+        def g3(z):
+            return z ** 4
+
         field.add_path(Vector(-3, -3), Vector(3, 3))
-        field.create(g, Vector(-5, -5), Vector(5, 5), 0.25)
+        field.create(g3, Vector(-5, -5), Vector(5, 5), 0.25)
         field.draw()
 
         return field
