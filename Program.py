@@ -19,10 +19,13 @@ class Program(App):
             return (z - 4) * (z + 4) * (z - 4j) * (z + 4j) * z ** -2
 
         def g3(z):
-            return z ** 4
+            return z ** 2 + 9
 
-        field.add_path(Vector(-3, -3), Vector(3, 3))
-        field.create(g3, Vector(-5, -5), Vector(5, 5), 0.25)
+        def g4(z):
+            return z ** 0
+
+        field.add_path(Vector(-4, -4), Vector(4, 4))
+        field.create(g4, Vector(-5, -5), Vector(5, 5), 0.25, paint_accuracy=20)
         field.draw()
 
         return field
