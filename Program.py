@@ -9,18 +9,17 @@ from math import cos, sin, exp
 class Program(App):
 
     def build(self):
+
         Window.size = (700, 700)
 
-        field = Field()
-
         def g(z):
-            return z ** 2 * (z - 3) * (z + 3) * (z - 3j) * (z + 3j)
+            return z ** 3 - z - 2
 
         def g2(z):
             return (z - 4) * (z + 4) * (z - 4j) * (z + 4j) * z ** -2
 
         def g3(z):
-            return z ** 2 + 9
+            return (z + 2) * (z - 2)
 
         def g4(z):
             return z ** 8 - 3 ** 8
@@ -42,8 +41,9 @@ class Program(App):
         def g6(z):
             return 1/z
 
-        # field.add_path(Vector(-4, -4), Vector(4, 4))
-        field.create(expc, Vector(-5, -5), Vector(5, 5), 0.2, paint_accuracy=20)
-        field.draw()
+        field = Field(g, Vector(-5, -5), Vector(5, 5), 0.2)
+        field.draw_cross()
+        field.draw_path(Vector(-4, -4), Vector(4, 4))
+        field.draw_field()
 
         return field
