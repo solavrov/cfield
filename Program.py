@@ -11,7 +11,7 @@ class Program(App):
     def build(self):
         Window.size = (700, 700)
 
-        field = Field(shift=Vector(350, 350), stretch=Vector(350, 350))
+        field = Field()
 
         def g(z):
             return z ** 2 * (z - 3) * (z + 3) * (z - 3j) * (z + 3j)
@@ -43,7 +43,7 @@ class Program(App):
             return 1/z
 
         # field.add_path(Vector(-4, -4), Vector(4, 4))
-        field.create(g5, Vector(-1, -1), Vector(1, 1), 0.025, paint_accuracy=20)
+        field.create(expc, Vector(-5, -5), Vector(5, 5), 0.2, paint_accuracy=20)
         field.draw()
 
         return field

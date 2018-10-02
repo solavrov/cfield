@@ -5,23 +5,24 @@ from OVector import OVector
 from math import inf
 from kivy.core.window import Window
 import cdf
+import rgb
 
 
 class Field(Widget):
 
-    def __init__(self, shift=Vector(0, 0), stretch=Vector(1, 1), back_color=Color(0, 0, 0, 1), **kwargs):
+    def __init__(self, back_color=Color(0, 0, 0, 1), **kwargs):
         super().__init__(**kwargs)
-        self.shift = stretch
-        self.stretch = shift
         self.field = []
+        self.shift = Vector(Window.size[0] / 2, Window.size[1] / 2)
+        self.stretch = Vector(1, 1)
         self.canvas.add(back_color)
         self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
 
     def map_ov(self, ov: OVector):
-        return OVector(self.stretch + self.shift * ov.p, self.shift * ov.v, ov.color)
+        return OVector(self.shift + self.stretch * ov.p, self.stretch * ov.v, ov.color)
 
     def map_v(self, v: Vector):
-        return Vector(self.stretch + self.shift * v)
+        return Vector(self.shift + self.stretch * v)
 
     def add_vector(self, ov: OVector):
         self.field.append(ov)
@@ -50,9 +51,9 @@ class Field(Widget):
                 ov = OVector(Vector(x, y), v)
                 self.add_vector(ov)
                 x = round(x + step, 14)
-                # x += step
             y = round(y + step, 14)
-            # y += step
+        self.stretch = Vector(Window.size[0] / (high_right.x - low_left.x),
+                              Window.size[1] / (high_right.y - low_left.y))
 
     def paint(self, accuracy):
         mods = []
@@ -71,7 +72,7 @@ class Field(Widget):
                 except ZeroDivisionError:
                     t = 0
                 u = cdf.interp(t, cdf_nodes)
-                ov.color = Color(u, 4 * u * (1 - u), 1 - u, 1)
+                ov.color = rgb.rgb1(u)
             else:
                 ov.color = Color(1, 0, 0, 1)
 
