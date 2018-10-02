@@ -49,8 +49,10 @@ class Field(Widget):
                     v = Vector(inf, inf)
                 ov = OVector(Vector(x, y), v)
                 self.add_vector(ov)
-                x += step
-            y += step
+                x = round(x + step, 14)
+                # x += step
+            y = round(y + step, 14)
+            # y += step
 
     def paint(self, accuracy):
         mods = []
