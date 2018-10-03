@@ -13,7 +13,7 @@ class Program(App):
         Window.size = (700, 700)
 
         def g(z):
-            return z ** 3 - z - 2
+            return z * (z - 2j)
 
         def g2(z):
             return (z - 4) * (z + 4) * (z - 4j) * (z + 4j) * z ** -2

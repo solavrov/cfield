@@ -10,13 +10,19 @@ import rgb
 
 class Field(Widget):
 
-    def __init__(self, back_color=Color(0, 0, 0, 1), **kwargs):
+    def __init__(self, field_function, low_left: Vector, high_right: Vector, step, paint_accuracy=20,
+                 back_color=Color(0, 0, 0, 1), **kwargs):
+
         super().__init__(**kwargs)
+
         self.field = []
-        self.shift = Vector(Window.size[0] / 2, Window.size[1] / 2)
-        self.stretch = Vector(1, 1)
-        self.canvas.add(back_color)
-        self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
+        self.shift = Vector(0, 0)
+        self.stretch = Vector(0, 0)
+
+        self.draw_background(back_color)
+        self.calc(field_function, low_left, high_right, step)
+        self.paint(paint_accuracy)
+        self.normalize(step * 0.8)
 
     def map_ov(self, ov: OVector):
         return OVector(self.shift + self.stretch * ov.p, self.stretch * ov.v, ov.color)
@@ -27,7 +33,7 @@ class Field(Widget):
     def add_vector(self, ov: OVector):
         self.field.append(ov)
 
-    def draw(self):
+    def draw_field(self):
         for ov in self.field:
             ov = self.map_ov(ov)
             e = ov.v.rotate(90).normalize()
@@ -39,6 +45,7 @@ class Field(Widget):
             self.canvas.add(dot)
 
     def calc(self, field_function, low_left: Vector, high_right: Vector, step: float):
+
         y = low_left.y
         while y <= high_right.y:
             x = low_left.x
@@ -52,6 +59,8 @@ class Field(Widget):
                 self.add_vector(ov)
                 x = round(x + step, 14)
             y = round(y + step, 14)
+
+        self.shift = Vector(Window.size[0] / 2, Window.size[1] / 2)
         self.stretch = Vector(Window.size[0] / (high_right.x - low_left.x),
                               Window.size[1] / (high_right.y - low_left.y))
 
@@ -80,12 +89,16 @@ class Field(Widget):
         for ov in self.field:
             ov.normalize(unit)
 
-    def create(self, field_function, low_left: Vector, high_right: Vector, step, paint_accuracy=20):
+    def build(self, field_function, low_left: Vector, high_right: Vector, step, paint_accuracy=20):
         self.calc(field_function, low_left, high_right, step)
         self.paint(paint_accuracy)
         self.normalize(step * 0.8)
 
-    def add_path(self, low_left: Vector, high_right: Vector, color=Color(1, 1, 1, 1)):
+    def draw_background(self, color):
+        self.canvas.add(color)
+        self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
+
+    def draw_path(self, low_left: Vector, high_right: Vector, color=Color(1, 1, 1, 1)):
         low_left = self.map_v(low_left)
         high_right = self.map_v(high_right)
         self.canvas.add(color)
@@ -93,4 +106,15 @@ class Field(Widget):
         self.canvas.add(Line(points=((low_left.x, high_right.y), high_right), width=1))
         self.canvas.add(Line(points=(high_right, (high_right.x, low_left.y)), width=1))
         self.canvas.add(Line(points=((high_right.x, low_left.y), low_left), width=1))
+
+    def draw_cross(self, center=Vector(0, 0), size=1, color=Color(0.20, 0.20, 0.20, 1)):
+        x_left = self.map_v(Vector(center.x - size, center.y))
+        x_right = self.map_v(Vector(center.x + size, center.y))
+        y_low = self.map_v(Vector(center.x, center.y - size))
+        y_high = self.map_v(Vector(center.x, center.y + size))
+        self.canvas.add(color)
+        self.canvas.add(Line(points=(x_left, x_right), width=5))
+        self.canvas.add(Line(points=(y_low, y_high), width=5))
+
+
 
