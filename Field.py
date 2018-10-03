@@ -60,9 +60,9 @@ class Field(Widget):
                 x = round(x + step, 14)
             y = round(y + step, 14)
 
-        self.shift = Vector(Window.size[0] / 2, Window.size[1] / 2)
         self.stretch = Vector(Window.size[0] / (high_right.x - low_left.x),
                               Window.size[1] / (high_right.y - low_left.y))
+        self.shift = Vector(-self.stretch.x * low_left.x, -self.stretch.y * low_left.y)
 
     def paint(self, accuracy):
         mods = []

@@ -41,9 +41,10 @@ class Program(App):
         def g6(z):
             return 1/z
 
-        field = Field(g, Vector(-5, -5), Vector(5, 5), 0.2)
-        field.draw_cross()
-        field.draw_path(Vector(-4, -4), Vector(4, 4))
+        field = Field(g, Vector(-1, 1), Vector(1, 3), 0.05)
+        # field = Field(g, Vector(-1, -1), Vector(1, 1), 0.05)
+        field.draw_cross(Vector(0, 2))
+        # field.draw_path(Vector(-4, -4), Vector(4, 4))
         field.draw_field()
 
         return field
